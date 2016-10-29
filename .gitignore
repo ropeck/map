@@ -1,0 +1,6 @@
+.apikey
+*.pyc
+bin
+lib
+include
+*json
