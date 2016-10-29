@@ -10,4 +10,9 @@ be in the file '.apikey' in the working directory.
 TODO() add environment var support for API key too
 TODO() make the API setup a library shared by the test code
 TODO() make some testing 
+TODO() stub out data for testing
+TODO() graph the arrival time
+TODO() memcache the data requests
+TODO() make an app in app engine to run it
+
 
