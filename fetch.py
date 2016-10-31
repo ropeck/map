@@ -2,15 +2,9 @@
 import googlemaps
 from datetime import datetime
 from datetime import timedelta
+import directions
 
-d = datetime.now()
-
-def gm_init():
-    with open('.apikey','r') as f:
-          key = f.read().strip()
-    return googlemaps.Client(key=key)
-
-gmaps = gm_init()
+gmaps = directions.Directions()
 
 
 def val(d,key='duration_in_traffic'): 
@@ -18,10 +12,7 @@ def val(d,key='duration_in_traffic'):
   return int(d[0]['legs'][0][key]['value'],)
 
 def time_diff(str,dst):
-  returning = gmaps.directions(
-                                     "1200 Crittenden Lane, Mountain View CA",
-                                     "114 El Camino Del Mar, Aptos CA",
-                        departure_time=d)
+  returning = gmaps.directions(datetime.today())
 
   return (val(returning) - val(returning,key='duration'))/60
        #print l['duration'], l['distance']

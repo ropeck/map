@@ -2,15 +2,12 @@
 import googlemaps
 from datetime import datetime
 from datetime import timedelta
+import directions
+
 import numpy as np
 import pylab as pl
 
-def gm_init():
-    with open('.apikey','r') as f:
-          key = f.read().strip()
-    return googlemaps.Client(key=key)
-
-gmaps = gm_init()
+gmaps = directions.Directions()
 
 
 d=datetime.today()
@@ -23,12 +20,7 @@ for f in range(24*6):
   td = d.replace(d.year,d.month,d.day,d.hour,0,0,0) + timedelta(hours=1)
   td = td + timedelta(minutes=f*10)
   print td
-  directions_result = gmaps.directions(
-                                     "1200 Crittenden Lane, Mountain View CA",
-                                     "114 El Camino Del Mar, Aptos CA",
-#                                     alternatives=True,
-                                     traffic_model="pessimistic",
-                                     departure_time=td)
+  directions_result = gmaps.directions(td)
   for x in directions_result:
     for l in x['legs']:
       tdata.append(td)
