@@ -1,14 +1,27 @@
 #!/usr/bin/env python
 import googlemaps
+import os.path, json
 from datetime import datetime
 from datetime import timedelta
 
-def directions(td=datetime.today()):
+def directions_api(td=datetime.today()):
   return gmaps.directions(
                                      "1200 Crittenden Lane, Mountain View CA",
                                      "114 El Camino Del Mar, Aptos CA",
                                      departure_time=td)
 
+def directions(td):
+  path = "directions/"+str(td)+".api"
+  result = ""
+  if os.path.exists(path):
+    with open(path,'r') as f:
+      result = json.load(f)
+  else:
+    result = directions_api(td)
+    with open(path,'w') as f:
+      json.dump(result, f)
+  return result
+     
 def gm_init():
   with open('.apikey','r') as f:
     key = f.read().strip()
@@ -18,7 +31,7 @@ gmaps = gm_init()
 
 d=datetime.today()
 d=d.replace(d.year,d.month,d.day,d.hour,int(d.minute/10)*10,0,0) + timedelta(minutes=10)
-l = directions()[0]['legs'][0] # first leg of first result (only one)
+l = directions(d)[0]['legs'][0] # first leg of first result (only one)
 diffstr = "(%+d)" % ((int(l['duration_in_traffic']['value'])-int(l['duration']['value']))/60)
 print l['distance']['text'], 'normally', l['duration']['text']
 print 'LEAVE ARRIVE NOTES'

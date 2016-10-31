@@ -4,3 +4,5 @@ bin
 lib
 include
 *json
+*.swp
+directions
