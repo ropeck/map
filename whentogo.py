@@ -18,7 +18,6 @@ gmaps = gm_init()
 
 d=datetime.today()
 d=d.replace(d.year,d.month,d.day,d.hour,int(d.minute/10)*10,0,0) + timedelta(minutes=10)
-print d
 l = directions()[0]['legs'][0] # first leg of first result (only one)
 diffstr = "(%+d)" % ((int(l['duration_in_traffic']['value'])-int(l['duration']['value']))/60)
 print l['distance']['text'], 'normally', l['duration']['text']
