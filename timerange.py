@@ -10,7 +10,6 @@ d=datetime.today()
 td = d.replace(d.year,d.month,d.day,d.hour,0,0,0)
 for f in range(24):
   td = td + timedelta(hours=1)
-  print td
   directions_result = gmaps.directions(td)
                                      
   for x in directions_result:
