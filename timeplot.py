@@ -21,11 +21,9 @@ for f in range(24*6):
   td = td + timedelta(minutes=f*10)
   print td
   directions_result = gmaps.directions(td)
-  for x in directions_result:
-    for l in x['legs']:
-      tdata.append(td)
-      mindata.append(int(l['duration']['value'])/60)
-      data.append(int(l['duration_in_traffic']['value'])/60)
+  tdata.append(td)
+  mindata.append(gmaps.duration/60)
+  data.append(gmaps.duration_in_traffic/60)
 
 print data
 #pl.plot_date(mindata, 'bs', data, 'g^')

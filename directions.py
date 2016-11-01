@@ -42,4 +42,4 @@ class Directions:
     self.distance_text = self.d('distance')
     self.duration_text = self.d('duration') 
     self.diffstr = "(%+d)" % ((self.duration_in_traffic-self.duration)/60)
-   
+    return self.leg 

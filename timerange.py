@@ -12,8 +12,6 @@ for f in range(24):
   td = td + timedelta(hours=1)
   directions_result = gmaps.directions(td)
                                      
-  for x in directions_result:
-    for l in x['legs']:
-      print (int(l['duration_in_traffic']['value'])-int(l['duration']['value']))/60, l['duration_in_traffic']['text'], 'vs', l['duration']['text'], l['distance']['text']
-    #print  x['legs'][0]['duration']['text'], x['summary']
-  print ""
+  print td, (gmaps.duration_in_traffic-gmaps.duration)/60,\
+	gmaps.duration_in_traffic_text, 'vs', gmaps.duration_text,\
+	gmaps.distance_text
