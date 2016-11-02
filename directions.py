@@ -30,14 +30,14 @@ class Directions:
   def dv(self, k):
     return int(self.d(k,'value'))
 
-  def directions(self, td):
+  def directions(self, td, cache=True):
     ORIGIN = "1200 Crittenden Lane, Mountain View CA"
     DESTINATION = "114 El Camino Del Mar, Aptos CA"
     m = Mapdirection.query(Mapdirection.depart == td,
                            Mapdirection.origin == ORIGIN,
                            Mapdirection.destination == DESTINATION).get()
 
-    if not m:
+    if not m or cache == False:
       self.leg = self.gmaps.directions(ORIGIN, DESTINATION,
                                        departure_time=td)[0]['legs'][0]
     else:

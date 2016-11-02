@@ -26,7 +26,8 @@ def whentogo():
   print "<pre>"
   print  gmaps.distance_text, 'normally', gmaps.duration_text
   print 'LEAVE ARRIVE NOTES'
-  print '[now]',(d+timedelta(minutes=gmaps.duration_in_traffic/60)).strftime("%H:%M"), gmaps.duration_in_traffic_text, gmaps.diffstr
+  tz = d.replace(tzinfo=timezone("UTC")).astimezone(timezone("US/Pacific"))
+  print '[now]',(tz+timedelta(minutes=gmaps.duration_in_traffic/60)).strftime("%H:%M"), gmaps.duration_in_traffic_text, gmaps.diffstr
   d=d.replace(d.year,d.month,d.day,d.hour,int(d.minute/10)*10,0,0) + timedelta(minutes=10)
   for f in range(24):
     td = d + timedelta(minutes=10*f)
