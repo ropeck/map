@@ -9,8 +9,8 @@ libraries:
 handlers:
 - url: /collectdata
   script: collector.app
-- url: /.*
-  script: main.app
 - url: /whentogo
   script: whentogo.app
+- url: /.*
+  script: main.app
 

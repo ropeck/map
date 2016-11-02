@@ -3,7 +3,8 @@
 from datetime import datetime
 from datetime import timedelta
 import directions
- 
+import logging
+
 from flask import Flask
 from cStringIO import StringIO
 import sys
@@ -43,7 +44,8 @@ def whentogo():
 
 @app.errorhandler(500)
 def server_error(e):
+
     # Log the error and stacktrace.
     logging.exception('An error occurred during a request.')
-    return 'An internal error occurred.', 500
+    return 'An internal error occurred.'+str(e), 500
 # [END app]
