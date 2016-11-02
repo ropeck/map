@@ -37,6 +37,7 @@ def hello():
                      origin=r['start_address'],
                      destination=r['end_address'],
                      body=json.dumps(r),
+                     depart=datetime.today(),
                      duration=val(r,key='duration')/60,
                      delay=(val(r) - val(r,key='duration'))/60)
     m.put()
