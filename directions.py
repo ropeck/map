@@ -9,6 +9,16 @@ class Config(ndb.Model):
   name = ndb.StringProperty()
   value = ndb.StringProperty()
 
+class Mapdirection(ndb.Model):
+    arrive = ndb.DateTimeProperty()
+    body = ndb.StringProperty(indexed=False)
+    delay = ndb.IntegerProperty()
+    depart = ndb.DateTimeProperty()
+    origin = ndb.StringProperty()
+    destination = ndb.StringProperty()
+    duration = ndb.IntegerProperty()
+#TODO(ropeck) use ndb.GeoPtProperty maybe?
+
 class Directions:
   def __init__(self):
     k = Config.query(Config.name == 'APIKEY').get()
@@ -32,4 +42,13 @@ class Directions:
     self.distance_text = self.d('distance')
     self.duration_text = self.d('duration') 
     self.diffstr = "(%+d)" % ((self.duration_in_traffic-self.duration)/60)
-    return self.leg 
+
+    m = Mapdirection(depart=td,
+                     origin=self.leg['start_address'],
+                     destination=self.leg['end_address'],
+                     body=json.dumps(self.leg),
+                     duration=self.duration/60,
+                     delay=(self.duration_in_traffic-self.duration)/60)
+    m.put()
+
+    return self.leg
