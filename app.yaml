@@ -3,5 +3,9 @@ api_version: 1
 threadsafe: true
 
 handlers:
+- url: /collectdata
+  script: collector.app
 - url: /.*
   script: main.app
+
+

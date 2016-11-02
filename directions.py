@@ -3,12 +3,19 @@ import googlemaps
 import os.path, json
 from datetime import datetime
 from datetime import timedelta
+from google.appengine.ext import ndb
 
+class Config(ndb.Model):
+  apikey = ndb.StringProperty()
  
 class Directions:
   def __init__(self):
-    with open('.apikey','r') as f:
-      key = f.read().strip()
+    k = ndb.Key('config','APIKEY')
+    key = k.get()
+    print key
+    if key == None:
+      with open('.apikey','r') as f:
+        key = f.read().strip()
     self.gmaps = googlemaps.Client(key=key)
 
   def directions_api(self, td=datetime.today()):

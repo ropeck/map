@@ -1,15 +1,20 @@
 #!/usr/bin/env python
+import googlemaps
 from datetime import datetime
 from datetime import timedelta
 import directions
-import string 
 
 gmaps = directions.Directions()
 
-d=datetime.today()
-l = gmaps.directions(d)
-#print gmaps.distance_text, 'normally', gmaps.duration_text
-#print 'LEAVE ARRIVE NOTES'
 
-print  string.join([d.strftime("%H:%M"), (d+timedelta(minutes=gmaps.duration_in_traffic/60)).strftime("%H:%M"),  str(gmaps.duration_in_traffic/60), gmaps.diffstr],
-	",")
+def val(d,key='duration_in_traffic'): 
+  return int(d[key]['value'],)
+
+def time_diff(str,dst):
+  returning = gmaps.directions(datetime.today())
+
+  return (val(returning) - val(returning,key='duration'))/60
+
+
+print time_diff("1200 Crittenden Lane, Mountain View CA",
+                "114 El Camino Del Mar, Aptos CA")
