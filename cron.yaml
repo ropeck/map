@@ -1,0 +1,4 @@
+cron:
+- description: collect travel time
+  url: /collectdata
+  schedule: every 10 mins
