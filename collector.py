@@ -31,13 +31,12 @@ def hello():
     def val(d,key='duration_in_traffic'): 
       return int(d[key]['value'],)
 
-    r = gmaps.directions(datetime.today())
+    r = gmaps.directions(datetime.now())
 
-    m = Mapdirection(depart=datetime.today(),
+    m = Mapdirection(depart=datetime.now(),
                      origin=r['start_address'],
                      destination=r['end_address'],
                      body=json.dumps(r),
-                     depart=datetime.today(),
                      duration=val(r,key='duration')/60,
                      delay=(val(r) - val(r,key='duration'))/60)
     m.put()
