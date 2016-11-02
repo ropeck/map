@@ -11,5 +11,6 @@ handlers:
   script: collector.app
 - url: /.*
   script: main.app
-
+- url: /whentogo
+  script: whentogo.app
 
