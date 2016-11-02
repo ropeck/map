@@ -5,19 +5,19 @@ from datetime import datetime
 from datetime import timedelta
 import directions
 import logging
+import json
 from google.appengine.ext import ndb
 
 from flask import Flask
 
-class Mapdirection(nbd.model):
-    arrive = nbd.DatetimeProperty()
-    body = nbd.StringProperty()
-    delay = nbd.IntegerProperty()
-    depart = nbd.DatetimeProperty()
-    origin = nbd.StringProperty()
-    destination = nbd.StringProperty()
-    duration = nbd.IntegerProperty()
-    
+class Mapdirection(ndb.Model):
+    arrive = ndb.DateProperty()
+    body = ndb.StringProperty(indexed=False)
+    delay = ndb.IntegerProperty()
+    depart = ndb.DateProperty()
+    origin = ndb.StringProperty()
+    destination = ndb.StringProperty()
+    duration = ndb.IntegerProperty()
 
 app = Flask(__name__)
 
@@ -34,10 +34,13 @@ def hello():
     r = gmaps.directions(datetime.today())
 
     m = Mapdirection(depart=datetime.today(),
-                     delay=(val(r) - val(r,key='duration'))/60,
-                     body=str(r))
+                     origin=r['start_address'],
+                     destination=r['end_address'],
+                     body=json.dumps(r),
+                     duration=val(r,key='duration')/60,
+                     delay=(val(r) - val(r,key='duration'))/60)
     m.put()
-    return str(m)
+    return json.dumps(r)
 
 
 
@@ -46,5 +49,5 @@ def hello():
 def server_error(e):
     # Log the error and stacktrace.
     logging.exception('An error occurred during a request.')
-    return 'An internal error occurred.', 500
+    return 'An internal error occurred.'+str(e), 500
 # [END app]
