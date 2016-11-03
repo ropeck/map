@@ -9,7 +9,9 @@ import pylab as pl
 
 import logging
 
-from flask import Flask
+from flask import Flask, send_file
+import StringIO
+import urllib, base64
 
 app = Flask(__name__)
 
@@ -26,7 +28,7 @@ def plot():
   for f in range(24*2):
     td = d.replace(d.year,d.month,d.day,d.hour,0,0,0) + timedelta(hours=1)
     td = td + timedelta(minutes=f*30)
-    print td
+#    print td
     directions_result = gmaps.directions(td)
     if prev:
       tdata.append(td)
@@ -45,6 +47,4 @@ def plot():
   pl.savefig(imgdata)
   imgdata.seek(0)  # rewind the data
 
-  print "Content-type: image/png\n"
-  uri = 'data:image/png;base64,' + urllib.quote(base64.b64encode(imgdata.buf))
-  print '<img src = "%s"/>' % uri
+  return send_file(imgdata, mimetype="image/png")

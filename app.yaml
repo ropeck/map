@@ -5,8 +5,10 @@ threadsafe: true
 libraries:
 - name: ssl
   version: 2.7
+- name: numpy
+  version: "latest"
 - name: matplotlib
-  version: latest
+  version: "latest"
 
 handlers:
 - url: /plot
