@@ -5,8 +5,12 @@ threadsafe: true
 libraries:
 - name: ssl
   version: 2.7
+- name: matplotlib
+  version: latest
 
 handlers:
+- url: /plot
+  script: timeplot.app
 - url: /collectdata
   script: collector.app
 - url: /whentogo
