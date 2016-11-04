@@ -36,14 +36,14 @@ def plot():
   mindata = []
   prev=None
   td = d.replace(d.year,d.month,d.day,7,0,0,0)  # midnight Pacific
-  #td = td.replace(tzinfo=pytz.timezone("UTC"))
+  td = td.replace(tzinfo=pytz.timezone("UTC")).astimezone(pytz.timezone('US/Pacific'))
   for f in range(24):
-    td = td + timedelta(hours=1)
     tdstr = td.strftime("%H:%M")
     directions_result = gmaps.directions(td)
     dur = gmaps.duration/60
     traffic = gmaps.duration_in_traffic/60
     delay = traffic - dur
     mapdata.append([tdstr, delay, traffic])
+    td = td + timedelta(hours=1)
 
   return render_template('timeplot.html', data=mapdata)

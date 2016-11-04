@@ -9,7 +9,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return '<h2>Map App</h2><a href="/whentogo">whentogo</a> <br><img src="/plot">'
+    return '<h2>Map App</h2><a href="/whentogo">whentogo</a> <br><iframe src="/plot" style="width: 80%; height: 600px frameBorder: 0"></iframe>'
 
 @app.route('/sample')
 def sample():
