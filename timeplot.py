@@ -59,5 +59,10 @@ def plot():
   imgdata = StringIO.StringIO()
   pl.savefig(imgdata)
   imgdata.seek(0)  # rewind the data
-
-  return send_file(imgdata, mimetype="image/png")
+  data = [          ['Time', 'Drive Time'],
+          ['00:00', 50],
+      ['00:10', 70],
+      ['00:20', 90],
+                    ]
+  return render_template('timeplot.html', data=data)
+#  return send_file(imgdata, mimetype="image/png")
