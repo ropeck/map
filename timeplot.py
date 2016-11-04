@@ -30,6 +30,7 @@ def plot():
 
   d=datetime.today()
 
+  mapdata = [['Time', 'Delay', 'Drive Time']]
   data = []
   tdata = []
   mindata = []
@@ -38,31 +39,11 @@ def plot():
   #td = td.replace(tzinfo=pytz.timezone("UTC"))
   for f in range(24):
     td = td + timedelta(hours=1)
-#    print td
+    tdstr = td.strftime("%H:%M")
     directions_result = gmaps.directions(td)
-    if prev:
-      #tdata.append(td.astimezone(pytz.timezone('US/Pacific')))
-      tdata.append(td)
-      mindata.append(gmaps.duration/60)
-  #    data.append(gmaps.duration_in_traffic/60-prev)
-      data.append(gmaps.duration_in_traffic/60)
-    prev = gmaps.duration_in_traffic/60
+    dur = gmaps.duration/60
+    traffic = gmaps.duration_in_traffic/60
+    delay = traffic - dur
+    mapdata.append([tdstr, delay, traffic])
 
-  #pl.plot_date(mindata, 'bs', data, 'g^')
-  #pl.plot_date(tdata, mindata, 'bs')
-  pl.plot_date(tdata, data, 'g^-', tz=pytz.timezone('US/Pacific'))
-#  pl.bar(tdata, data, align='center')
-  plt.gcf().autofmt_xdate()
-
-#  pl.savefig(sys.stdout, format='png')
-
-  imgdata = StringIO.StringIO()
-  pl.savefig(imgdata)
-  imgdata.seek(0)  # rewind the data
-  data = [          ['Time', 'Drive Time'],
-          ['00:00', 50],
-      ['00:10', 70],
-      ['00:20', 90],
-                    ]
-  return render_template('timeplot.html', data=data)
-#  return send_file(imgdata, mimetype="image/png")
+  return render_template('timeplot.html', data=mapdata)
