@@ -1,7 +1,7 @@
 # [START app]
 import logging
 
-from flask import Flask
+from flask import Flask, render_template
 
 
 app = Flask(__name__)
@@ -11,6 +11,9 @@ app = Flask(__name__)
 def hello():
     return '<h2>Map App</h2><a href="/whentogo">whentogo</a> <br><img src="/plot">'
 
+@app.route('/sample')
+def sample():
+    return render_template('sample.html')
 
 @app.errorhandler(500)
 def server_error(e):

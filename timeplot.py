@@ -10,7 +10,7 @@ import pytz
 
 import logging
 
-from flask import Flask, send_file
+from flask import Flask, send_file, render_template
 import StringIO
 import urllib, base64
 import matplotlib.pyplot as plt
@@ -21,6 +21,10 @@ formatter = DateFormatter('%H:%M')
 app = Flask(__name__)
 
 @app.route('/plot')
+# other plot
+#     return render_template('sample.html', var=data)
+#
+
 def plot():
   gmaps = directions.Directions()
 
@@ -47,6 +51,7 @@ def plot():
   #pl.plot_date(mindata, 'bs', data, 'g^')
   #pl.plot_date(tdata, mindata, 'bs')
   pl.plot_date(tdata, data, 'g^-', tz=pytz.timezone('US/Pacific'))
+#  pl.bar(tdata, data, align='center')
   plt.gcf().autofmt_xdate()
 
 #  pl.savefig(sys.stdout, format='png')
