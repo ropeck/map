@@ -9,7 +9,8 @@ app = Flask(__name__)
 
 @app.route('/')
 def hello():
-    return '<h2>Map App</h2><img src="/plot">'
+    return '<h2>Map App</h2><a href="/whentogo">whentogo</a>
+  <br><img src="/plot">'
 
 
 @app.errorhandler(500)
