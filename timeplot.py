@@ -30,7 +30,7 @@ def plot():
 
   d=datetime.today()
 
-  mapdata = [['Time', 'Delay', 'Drive Time']]
+  mapdata = [['Time', 'Expected', 'Delay']]
   data = []
   tdata = []
   mindata = []
@@ -42,8 +42,7 @@ def plot():
     directions_result = gmaps.directions(td)
     dur = gmaps.duration/60
     traffic = gmaps.duration_in_traffic/60
-    delay = traffic - dur
-    mapdata.append([tdstr, delay, traffic])
+    mapdata.append([tdstr, dur, traffic - dur])
     td = td + timedelta(hours=1)
 
   return render_template('timeplot.html', data=mapdata)
