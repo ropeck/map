@@ -17,6 +17,8 @@ class Mapdirection(ndb.Model):
     origin = ndb.StringProperty()
     destination = ndb.StringProperty()
     duration = ndb.IntegerProperty()
+    created = ndb.DateTimeProperty(auto_now=True)
+    
 #TODO(ropeck) use ndb.GeoPtProperty maybe?
 
 class Directions:

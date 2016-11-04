@@ -21,7 +21,7 @@ def hello():
     # the script anytime.  So, zero out the end of the time to make it nice.
     dt = datetime.now()
     dt = dt.replace(dt.year,dt.month,dt.day,dt.hour,int(dt.minute/10)*10,0,0) + timedelta(minutes=10)
-    r = gmaps.directions(dt, cache=False)
+    r = gmaps.directions(dt)
     return json.dumps(r)
 
 
