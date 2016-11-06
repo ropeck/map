@@ -4,6 +4,8 @@ import os.path, json
 from datetime import datetime
 from datetime import timedelta
 from google.appengine.ext import ndb
+import pytz
+import sys
 
 class Config(ndb.Model):
   name = ndb.StringProperty()
@@ -18,7 +20,7 @@ class Mapdirection(ndb.Model):
     destination = ndb.StringProperty()
     duration = ndb.IntegerProperty()
     created = ndb.DateTimeProperty(auto_now=True)
-    
+
 #TODO(ropeck) use ndb.GeoPtProperty maybe?
 
 class Directions:
@@ -35,6 +37,10 @@ class Directions:
   def directions(self, td, cache=True):
     ORIGIN = "1200 Crittenden Lane, Mountain View CA"
     DESTINATION = "114 El Camino Del Mar, Aptos CA"
+    if td.tzinfo is None or td.tzinfo.utcoffset(td) is None:
+      td = td.replace(tzinfo=pytz.UTC)
+
+    td = td.astimezone(pytz.UTC).replace(tzinfo=None)
     m = Mapdirection.query(Mapdirection.depart == td,
                            Mapdirection.origin == ORIGIN,
                            Mapdirection.destination == DESTINATION).get()
@@ -59,6 +65,10 @@ class Directions:
                        body=json.dumps(self.leg),
                        duration=self.duration/60,
                        delay=(self.duration_in_traffic-self.duration)/60)
-      m.put()
+      try:
+        m.put()
+      except:
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        print "error saving Mapdirection", str(m.depart), exc_value, exc_traceback
 
     return self.leg
