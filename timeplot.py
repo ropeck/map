@@ -25,7 +25,7 @@ app = Flask(__name__)
 #     return render_template('sample.html', var=data)
 #
 
-def plot():
+def drawday(td):
   gmaps = directions.Directions()
 
   d=datetime.today()
@@ -35,14 +35,22 @@ def plot():
   tdata = []
   mindata = []
   prev=None
-  td = d.replace(d.year,d.month,d.day,7,0,0,0)  # midnight Pacific
   td = td.replace(tzinfo=pytz.timezone("UTC")).astimezone(pytz.timezone('US/Pacific'))
   for f in range(24):
     tdstr = td.strftime("%H:%M")
     directions_result = gmaps.directions(td)
     dur = gmaps.duration/60
     traffic = gmaps.duration_in_traffic/60
-    mapdata.append([tdstr, dur, traffic - dur])
+    delay = traffic - dur
+    if delay < 0:
+      dur = dur + delay
+      delay = delay * -1
+    mapdata.append([tdstr, dur, delay])
     td = td + timedelta(hours=1)
 
+def plot():
+  d = datetime.now()
+  mapdata = drawday(d.replace(d.year,d.month,d.day,7,0,0,0))  # midnight Pacific
   return render_template('timeplot.html', data=mapdata)
+
+
