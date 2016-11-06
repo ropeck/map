@@ -21,8 +21,6 @@ class Mapdirection(ndb.Model):
     duration = ndb.IntegerProperty()
     created = ndb.DateTimeProperty(auto_now=True)
 
-#TODO(ropeck) use ndb.GeoPtProperty maybe?
-
 class Directions:
   def __init__(self):
     k = Config.query(Config.name == 'APIKEY').get()
@@ -37,6 +35,14 @@ class Directions:
   def directions(self, td, cache=True):
     ORIGIN = "1200 Crittenden Lane, Mountain View CA"
     DESTINATION = "114 El Camino Del Mar, Aptos CA"
+
+    self.duration_in_traffic = 0
+    self.duration_in_traffic_text = ''
+    self.duration = 0
+    self.distance_text = ''
+    self.duration_text = ''
+    self.diffstr = ''
+
     if td.tzinfo is None or td.tzinfo.utcoffset(td) is None:
       td = td.replace(tzinfo=pytz.UTC)
 
@@ -44,6 +50,9 @@ class Directions:
     m = Mapdirection.query(Mapdirection.depart == td,
                            Mapdirection.origin == ORIGIN,
                            Mapdirection.destination == DESTINATION).get()
+
+    if not m and td < datetime.now():  # no data from past
+      return
 
     if not m or cache == False:
       self.leg = self.gmaps.directions(ORIGIN, DESTINATION,

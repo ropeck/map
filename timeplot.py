@@ -20,7 +20,6 @@ formatter = DateFormatter('%H:%M')
 
 app = Flask(__name__)
 
-@app.route('/plot')
 # other plot
 #     return render_template('sample.html', var=data)
 #
@@ -47,9 +46,11 @@ def drawday(td):
       delay = delay * -1
     mapdata.append([tdstr, dur, delay])
     td = td + timedelta(hours=1)
+  return mapdata 
 
+@app.route('/plot')
 def plot():
-  d = datetime.now()
+  d = datetime.now() #- timedelta(hours=24)
   mapdata = drawday(d.replace(d.year,d.month,d.day,7,0,0,0))  # midnight Pacific
   return render_template('timeplot.html', data=mapdata)
 

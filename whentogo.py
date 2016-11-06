@@ -33,7 +33,10 @@ def whentogo():
     td = d + timedelta(minutes=10*f)
     l = gmaps.directions(td)
     tz = td.replace(tzinfo=timezone("UTC")).astimezone(timezone("US/Pacific"))
-    print tz.strftime("%H:%M"),(tz+timedelta(minutes=gmaps.duration_in_traffic/60)).strftime("%H:%M"), gmaps.duration_in_traffic_text, gmaps.diffstr
+    try:
+      print tz.strftime("%H:%M"),(tz+timedelta(minutes=gmaps.duration_in_traffic/60)).strftime("%H:%M"), gmaps.duration_in_traffic_text, gmaps.diffstr
+    except Exception, e:
+      print "error", repr(e)
 
       # 44 miles normally 0:52
       # now   17:00 1:12 (+19)
