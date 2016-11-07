@@ -32,9 +32,14 @@ class Directions:
   def dv(self, k):
     return int(self.d(k,'value'))
 
-  def directions(self, td, cache=True):
+  def directions(self, td, cache=True, reverse=False):
     ORIGIN = "1200 Crittenden Lane, Mountain View CA"
     DESTINATION = "114 El Camino Del Mar, Aptos CA"
+
+    if reverse:
+      other = ORIGIN
+      ORIGIN = DESTINATION
+      DESTINATION = other
 
     self.duration_in_traffic = 0
     self.duration_in_traffic_text = ''
