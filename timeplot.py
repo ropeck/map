@@ -30,7 +30,7 @@ def drawday(td):
 
   d=datetime.today()
 
-  mapdata = [['Time', 'Expected', 'Delay']]
+  mapdata = [['Time', 'Expected', 'AM Delay', 'PM Delay']]
   data = []
   tdata = []
   mindata = []
@@ -41,11 +41,20 @@ def drawday(td):
     directions_result = gmaps.directions(td)
     dur = gmaps.duration/60
     traffic = gmaps.duration_in_traffic/60
-    delay = traffic - dur
-    if delay < 0:
-      dur = dur + delay
-      delay = delay * -1
-    mapdata.append([tdstr, dur, delay])
+    pmdelay = traffic - dur
+    if pmdelay < 0:
+      dur = dur + pmdelay
+      pmdelay = delay * -1
+
+    directions_result = gmaps.directions(td, reverse=True)
+    dur = gmaps.duration/60
+    traffic = gmaps.duration_in_traffic/60
+    amdelay = traffic - dur
+    if amdelay < 0:
+      dur = dur + amdelay
+      amdelay = delay * -1
+
+    mapdata.append([tdstr, dur, amdelay, pmdelay])
     td = td + timedelta(hours=1)
   return mapdata 
 
