@@ -50,8 +50,13 @@ def drawday(td):
   return mapdata 
 
 @app.route('/plotdata')
-def plotdata():
-  d = datetime.now() #- timedelta(hours=24)
+@app.route('/plotdata/<date>')
+def plotdata(date=None):
+  if not date:
+    d = datetime.now()
+  else:
+    d = datetime.fromtimestamp(int(date)/1000)
+
   mapdata = drawday(d.replace(d.year,d.month,d.day,7,0,0,0))  # midnight Pacific
   dat = json.dumps(mapdata)
   resp = Response(response=dat, \
@@ -61,6 +66,6 @@ def plotdata():
 
 @app.route('/plot')
 def plotpage():
-  return render_template('timeplot.html', data=mapdata)
+  return render_template('timeplot.html')
 
 
