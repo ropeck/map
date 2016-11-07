@@ -4,12 +4,12 @@
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript">
       google.charts.load('current', {'packages':['bar']});
-      google.charts.setOnLoadCallback(drawpage);
+      google.charts.setOnLoadCallback(drawmany);
 
-      function drawChart() {
+      function drawChart(date) {
 
         var jsonData = $.ajax({
-            url: "/plotdata/" + new Date().getTime(),
+            url: "/plotdata/" + date,
             dataType: "json",
             async: false
             }).responseText;
@@ -27,17 +27,29 @@
           stacked: true,
         };
 
-        var chart = new google.charts.Bar(document.getElementById('columnchart_material'));
+        var chart = new google.charts.Bar(document.getElementById(date));
 
         chart.draw(data, google.charts.Bar.convertOptions(options));
-      }
-      function drawpage() {
-        drawChart()
+      };
+      function drawpage(date) {
+        var div = document.createElement('div');
+        div.id = date;
+        var plotarea = document.getElementById('plotarea');
+        plotarea.append(div)
+        drawChart(date);
+      };
+
+      function drawmany() {
+        var date = new Date().getTime();
+        for (i=0; i<7; i++) {
+          drawpage(date);
+          date += 86400000;
+        }
       };
 
     </script>
   </head>
   <body>
-    <div id="columnchart_material" style="width: 900px; height: 200px;"></div>
+    <div id="plotarea" style="width: 900px"></div>
   </body>
 </html>
