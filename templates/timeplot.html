@@ -5,8 +5,15 @@
       google.charts.load('current', {'packages':['bar']});
       google.charts.setOnLoadCallback(drawpage);
 
-      function drawChart(graphdata) {
-        var data = google.visualization.arrayToDataTable(graphdata);
+      function drawChart() {
+
+        var jsonData = $.ajax({
+            url: "/plotdata",
+            dataType: "json",
+            async: false
+            }).responseText;
+            
+        var data = new google.visualization.DataTable(jsonData);
 
         var options = {
           chart: {
@@ -21,7 +28,7 @@
         chart.draw(data, options);
       }
       function drawpage() {
-        drawChart({{data | safe}})
+        drawChart()
       };
 
     </script>
