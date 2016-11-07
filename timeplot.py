@@ -57,11 +57,9 @@ def plotdata(date=None):
   else:
     d = datetime.fromtimestamp(int(date)/1000)
 
-  mapdata = drawday(d.replace(d.year,d.month,d.day,7,0,0,0))  # midnight Pacific
+  mapdata = drawday(d.replace(d.year,d.month,d.day,8,0,0,0))  # midnight Pacific
   dat = json.dumps(mapdata)
-  resp = Response(response=dat, \
-		status = 200, \
-		mimetype="application/json")
+  resp = Response(response=dat, status = 200, mimetype="application/json")
   return(resp)
 
 @app.route('/plot')
