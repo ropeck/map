@@ -7,10 +7,11 @@ import directions
 import numpy as np
 import pylab as pl
 import pytz
+import json
 
 import logging
 
-from flask import Flask, send_file, render_template
+from flask import Flask, send_file, render_template, Response
 import StringIO
 import urllib, base64
 import matplotlib.pyplot as plt
@@ -48,10 +49,18 @@ def drawday(td):
     td = td + timedelta(hours=1)
   return mapdata 
 
-@app.route('/plot')
-def plot():
+@app.route('/plotdata')
+def plotdata():
   d = datetime.now() #- timedelta(hours=24)
   mapdata = drawday(d.replace(d.year,d.month,d.day,7,0,0,0))  # midnight Pacific
+  dat = json.dumps(mapdata)
+  resp = Response(response=dat, \
+		status = 200, \
+		mimetype="application/json")
+  return(resp)
+
+@app.route('/plot')
+def plotpage():
   return render_template('timeplot.html', data=mapdata)
 
 
