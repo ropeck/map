@@ -32,14 +32,14 @@ class Directions:
   def dv(self, k):
     return int(self.d(k,'value'))
 
-  def directions(self, td, cache=True, reverse=False):
-    ORIGIN = "1200 Crittenden Lane, Mountain View CA"
-    DESTINATION = "114 El Camino Del Mar, Aptos CA"
+  def directions(self, td, cache=True, reverse=False,
+                 origin =  "1200 Crittenden Lane, Mountain View CA",
+                 destination = "114 El Camino Del Mar, Aptos CA"):
 
     if reverse:
-      other = ORIGIN
-      ORIGIN = DESTINATION
-      DESTINATION = other
+      save = destination
+      destination = origin
+      origin = save
 
     self.duration_in_traffic = 0
     self.duration_in_traffic_text = ''
@@ -53,14 +53,14 @@ class Directions:
 
     td = td.astimezone(pytz.UTC).replace(tzinfo=None)
     m = Mapdirection.query(Mapdirection.depart == td,
-                           Mapdirection.origin == ORIGIN,
-                           Mapdirection.destination == DESTINATION).get()
+                           Mapdirection.origin == origin,
+                           Mapdirection.destination == destination).get()
 
     if not m and td < datetime.now():  # no data from past
       return
 
     if not m or cache == False:
-      self.leg = self.gmaps.directions(ORIGIN, DESTINATION,
+      self.leg = self.gmaps.directions(origin, destination,
                                        departure_time=td)[0]['legs'][0]
     else:
       self.leg = json.loads(m.body)
@@ -74,8 +74,8 @@ class Directions:
 
     if not m:                   # save the data if it's not in the datastore
       m = Mapdirection(depart=td,
-                       origin=ORIGIN,
-                       destination=DESTINATION,
+                       origin=origin,
+                       destination=destination,
                        body=json.dumps(self.leg),
                        duration=self.duration/60,
                        delay=(self.duration_in_traffic-self.duration)/60)

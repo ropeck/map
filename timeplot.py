@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 import googlemaps
+from google.appengine.api import memcache
 from datetime import datetime
 from datetime import timedelta
 import directions
@@ -25,38 +26,67 @@ app = Flask(__name__)
 #     return render_template('sample.html', var=data)
 #
 
-def drawday(td):
+def drawday(td, reverse=False):
+  memkey = str(td)
+  if reverse:
+    memkey = memkey + ":reverse"
+  d = memcache.get(memkey)
+  if d:
+    return d
+
   gmaps = directions.Directions()
 
   d=datetime.today()
 
-  mapdata = [['Time', 'Expected', 'AM Delay', 'PM Delay']]
+  mapdata = [['Time', 'Expected', 'Delay']]
+  if reverse:
+    #mapdata = [['Time', 'AM Delay', 'PM Delay']]
+    mapdata = [['Time', 'Delay']]
+
   data = []
   tdata = []
   mindata = []
-  prev=None
+  prev = None
   td = td.replace(tzinfo=pytz.timezone("UTC")).astimezone(pytz.timezone('US/Pacific'))
+  td = td.replace(hour=0, minute=0)
   for f in range(24):
     tdstr = td.strftime("%H:%M")
     directions_result = gmaps.directions(td)
     dur = gmaps.duration/60
     traffic = gmaps.duration_in_traffic/60
     pmdelay = traffic - dur
-    if pmdelay < 0:
+    if pmdelay < 0 and not reverse:
       dur = dur + pmdelay
-      pmdelay = delay * -1
+      pmdelay = pmdelay * -1
 
     directions_result = gmaps.directions(td, reverse=True)
     dur = gmaps.duration/60
     traffic = gmaps.duration_in_traffic/60
     amdelay = traffic - dur
-    if amdelay < 0:
+    if amdelay < 0 and not reverse:
       dur = dur + amdelay
-      amdelay = delay * -1
+      amdelay = amdelay * -1
 
-    mapdata.append([tdstr, dur, amdelay, pmdelay])
+    if reverse:
+      mapdata.append([tdstr, max(amdelay, pmdelay)])
+    else:
+      mapdata.append([tdstr, dur, pmdelay])
     td = td + timedelta(hours=1)
-  return mapdata 
+  memcache.set(memkey, mapdata)
+  return mapdata
+
+@app.route('/plotdatarev')
+@app.route('/plotdatarev/<date>')
+def plotdatarev(date=None):
+  if not date:
+    d = datetime.now()
+  else:
+    d = datetime.fromtimestamp(int(date)/1000)
+
+  mapdata = drawday(d.replace(d.year,d.month,d.day,8,0,0,0), reverse=True)  # midnight Pacific
+  dat = json.dumps(mapdata)
+  resp = Response(response=dat, status = 200, mimetype="application/json")
+  return(resp)
 
 @app.route('/plotdata')
 @app.route('/plotdata/<date>')
@@ -70,6 +100,10 @@ def plotdata(date=None):
   dat = json.dumps(mapdata)
   resp = Response(response=dat, status = 200, mimetype="application/json")
   return(resp)
+
+@app.route('/pmplot')
+def pmplotpage():
+  return render_template('pmplot.html')
 
 @app.route('/plot')
 def plotpage():

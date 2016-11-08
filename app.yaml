@@ -13,6 +13,10 @@ libraries:
 handlers:
 - url: /plotdata.*
   script: timeplot.app
+- url: /plotdatarev.*
+  script: timeplot.app
+- url: /pmplot
+  script: timeplot.app
 - url: /plot
   script: timeplot.app
 - url: /collectdata
