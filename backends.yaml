@@ -1,3 +1,0 @@
-backends:
-- name: cmdline
-  class: B4_1G
