@@ -70,11 +70,13 @@ def drawday(td, reverse=False, cache=True):
     if amdelay < 0 and not reverse:
       dur = dur + amdelay
       amdelay = amdelay * -1
+    delay = max(amdelay, pmdelay)
 
     if reverse:
-      mapdata.append([tdstr, max(amdelay, pmdelay)])
+      mapdata.append([tdstr, delay])
     else:
-      mapdata.append([tdstr, dur, pmdelay])
+      mapdata.append([tdstr, delay, dur])
+
     td = td + timedelta(hours=1)
   memcache.set(memkey, mapdata)
   return mapdata
@@ -93,7 +95,6 @@ def drawdaylines(td):
     day = td.strftime("%a")
     data[day] = drawday(td, reverse=True, cache=False)
     daylist.append(day)
-    print day, td
     td = td + timedelta(days=1)
 
   ret = [['Time'] + daylist]
@@ -160,4 +161,24 @@ def traveldata(date=None):
   mapdata = drawdaylines(d)
   dat = json.dumps(mapdata)
   resp = Response(response=dat, status = 200, mimetype="application/json")
+  return(resp)
+
+@app.route('/arrive')
+def arrive():
+  return render_template('arrive.html')
+
+def timeplus(base, off):
+  (hs,ms) = base.split(':')
+  return int(ms)+60*int(hs) + off
+
+@app.route('/arrivedata')
+def arrivedata():
+  d = datetime.now()
+  midnight = d.replace(d.year,d.month,d.day,8,0,0,0)
+  data = [['Time', 'Drive', 'Delay']]
+  for h in drawday(midnight, cache=False)[1:]:  # skip header
+    data.append([h[0], timeplus(h[0],h[2]), timeplus(h[0],h[1])])
+
+  data = json.dumps(data)
+  resp = Response(response=data, status = 200, mimetype="application/json")
   return(resp)

@@ -13,6 +13,8 @@ libraries:
 handlers:
 - url: /travel.*
   script: timeplot.app
+- url: /arrive.*
+  script: timeplot.app
 - url: /plot.*
   script: timeplot.app
 - url: /pmplot

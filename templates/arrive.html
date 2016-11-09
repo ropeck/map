@@ -1,0 +1,30 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['line']});
+      google.charts.setOnLoadCallback(drawpage);
+
+      function drawpage() {
+        var date = new Date().getTime();
+        var jsonData = $.ajax({
+            url: "/arrivedata/" + date,
+            dataType: "json",
+            async: false
+            }).responseText;
+
+        var plotarea = document.getElementById('plotarea');
+        var data = new google.visualization.arrayToDataTable(JSON.parse(jsonData));
+        var options = {
+        };
+
+        var chart = new google.charts.Line(plotarea);
+        chart.draw(data, options);
+      };
+    </script>
+  </head>
+  <body>
+    <div id="plotarea" style="width: 900px; height: 600px;"></div>
+  </body>
+</html>
