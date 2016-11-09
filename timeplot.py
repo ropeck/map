@@ -172,7 +172,8 @@ def timeplus(base, off):
   return int(ms)+60*int(hs) + off
 
 @app.route('/arrivedata')
-def arrivedata():
+@app.route('/arrivedata/<date>')
+def arrivedata(date):
   d = datetime.now()
   midnight = d.replace(d.year,d.month,d.day,8,0,0,0)
   data = [['Time', 'Drive', 'Delay']]
