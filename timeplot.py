@@ -26,17 +26,21 @@ app = Flask(__name__)
 #     return render_template('sample.html', var=data)
 #
 
-def drawday(td, reverse=False):
+@app.route('/drawday/<date>')
+def drawdaypage(date):
+  dat = json.dumps(drawday(date))
+  resp = Response(response=dat, status = 200, mimetype="application/json")
+  return(resp)
+
+def drawday(td, reverse=False, cache=True):
   memkey = str(td)
   if reverse:
     memkey = memkey + ":reverse"
   d = memcache.get(memkey)
-  if d:
+  if d and cache:
     return d
 
   gmaps = directions.Directions()
-
-  d=datetime.today()
 
   mapdata = [['Time', 'Expected', 'Delay']]
   if reverse:
@@ -48,7 +52,7 @@ def drawday(td, reverse=False):
   mindata = []
   prev = None
   td = td.replace(tzinfo=pytz.timezone("UTC")).astimezone(pytz.timezone('US/Pacific'))
-  td = td.replace(hour=0, minute=0)
+  td = td.replace(hour=0, minute=0, second=0)
   for f in range(24):
     tdstr = td.strftime("%H:%M")
     directions_result = gmaps.directions(td)
@@ -76,23 +80,35 @@ def drawday(td, reverse=False):
   return mapdata
 
 def drawdaylines(td):
-  memkey = 'lines:'+str(td)
-
-
-  mapdata = [['Time']]
+  midnight = td.replace(td.year,td.month,td.day,8,0,0,0)
+  memkey = 'lines:'+str(midnight)
 
 # collect the time for the weekly graph
 # mapdata for each day, then draw part of them together
-#
 
-  data = []
-  for day in range(7):
-    m = mapdata(td)
-    td = td + datetime.timedelta(days=1)
-    data.append(m) # not sure what here...
+  daylist = []
+  data = {}
+  td = midnight
+  for i in range(7):
+    day = td.strftime("%a")
+    data[day] = drawday(td, reverse=True, cache=False)
+    daylist.append(day)
+    print day, td
+    td = td + timedelta(days=1)
 
-  memcache.set(memkey, data)  # maybe use a datastore to cache here?
-  return data
+  ret = [['Time'] + daylist]
+  r = 0
+  for m in drawday(td)[1:]:
+    r = r + 1
+    row = [m[0]]
+    dn = 1
+    for day in daylist:
+      row.append(data[day][r][1])
+      dn = dn + 1
+    ret.append(row)
+
+  memcache.set(memkey, ret)  # maybe use a datastore to cache here?
+  return ret
 
 @app.route('/plotdatarev')
 @app.route('/plotdatarev/<date>')
@@ -115,7 +131,8 @@ def plotdata(date=None):
   else:
     d = datetime.fromtimestamp(int(date)/1000)
 
-  mapdata = drawday(d.replace(d.year,d.month,d.day,8,0,0,0))  # midnight Pacific
+  #mapdata = drawday(d.replace(d.year,d.month,d.day,8,0,0,0))  # midnight Pacific
+  mapdata = drawday(d)
   dat = json.dumps(mapdata)
   resp = Response(response=dat, status = 200, mimetype="application/json")
   return(resp)
@@ -140,8 +157,7 @@ def traveldata(date=None):
   else:
     d = datetime.fromtimestamp(int(date)/1000)
 
-  mapdata = drawdaylines(d.replace(d.year,d.month,d.day,8,0,0,0))  # midnight Pacific
+  mapdata = drawdaylines(d)
   dat = json.dumps(mapdata)
   resp = Response(response=dat, status = 200, mimetype="application/json")
   return(resp)
-

@@ -17,18 +17,9 @@
         var data = new google.visualization.arrayToDataTable(JSON.parse(jsonData));
 
         var options = {
-          hAxis: { textPosition: 'none' },
-          axes: {
-            x: {
-              0: { side: 'bottom', label: ""}
-            }
-          },
-          legend: { position: 'none' },
-          stacked: true,
         };
 
         var chart = new google.charts.Line(document.getElementById(date));
-
         chart.draw(data, options);
       };
       function drawpage(date) {
@@ -41,10 +32,7 @@
 
       function drawmany() {
         var date = new Date().getTime();
-        for (i=0; i<7; i++) {
-          drawpage(date);
-          date += 86400000;
-        }
+        drawpage(date);
       };
 
     </script>
