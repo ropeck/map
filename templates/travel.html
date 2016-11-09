@@ -1,0 +1,55 @@
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['line']});
+      google.charts.setOnLoadCallback(drawmany);
+
+      function drawChart(date) {
+
+        var jsonData = $.ajax({
+            url: "/traveldata/" + date,
+            dataType: "json",
+            async: false
+            }).responseText;
+
+        var data = new google.visualization.arrayToDataTable(JSON.parse(jsonData));
+
+        var options = {
+          hAxis: { textPosition: 'none' },
+          axes: {
+            x: {
+              0: { side: 'bottom', label: ""}
+            }
+          },
+          legend: { position: 'none' },
+          stacked: true,
+        };
+
+        var chart = new google.charts.Line(document.getElementById(date));
+
+        chart.draw(data, options);
+      };
+      function drawpage(date) {
+        var div = document.createElement('div');
+        div.id = date;
+        var plotarea = document.getElementById('plotarea');
+        plotarea.append(div)
+        drawChart(date);
+      };
+
+      function drawmany() {
+        var date = new Date().getTime();
+        for (i=0; i<7; i++) {
+          drawpage(date);
+          date += 86400000;
+        }
+      };
+
+    </script>
+  </head>
+  <body>
+    <div id="plotarea" style="width: 900px"></div>
+  </body>
+</html>

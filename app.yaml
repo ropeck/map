@@ -11,9 +11,9 @@ libraries:
   version: "latest"
 
 handlers:
-- url: /plotdata.*
+- url: /travel.*
   script: timeplot.app
-- url: /plotdatarev.*
+- url: /plot.*
   script: timeplot.app
 - url: /pmplot
   script: timeplot.app

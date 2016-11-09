@@ -75,6 +75,25 @@ def drawday(td, reverse=False):
   memcache.set(memkey, mapdata)
   return mapdata
 
+def drawdaylines(td):
+  memkey = 'lines:'+str(td)
+
+
+  mapdata = [['Time']]
+
+# collect the time for the weekly graph
+# mapdata for each day, then draw part of them together
+#
+
+  data = []
+  for day in range(7):
+    m = mapdata(td)
+    td = td + datetime.timedelta(days=1)
+    data.append(m) # not sure what here...
+
+  memcache.set(memkey, data)  # maybe use a datastore to cache here?
+  return data
+
 @app.route('/plotdatarev')
 @app.route('/plotdatarev/<date>')
 def plotdatarev(date=None):
@@ -109,4 +128,20 @@ def pmplotpage():
 def plotpage():
   return render_template('timeplot.html')
 
+@app.route('/travel')
+def travel():
+  return render_template('travel.html')
+
+@app.route('/traveldata')
+@app.route('/traveldata/<date>')
+def traveldata(date=None):
+  if not date:
+    d = datetime.now()
+  else:
+    d = datetime.fromtimestamp(int(date)/1000)
+
+  mapdata = drawdaylines(d.replace(d.year,d.month,d.day,8,0,0,0))  # midnight Pacific
+  dat = json.dumps(mapdata)
+  resp = Response(response=dat, status = 200, mimetype="application/json")
+  return(resp)
 
