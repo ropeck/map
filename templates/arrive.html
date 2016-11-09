@@ -3,7 +3,7 @@
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script type="text/javascript">
-      google.charts.load('current', {'packages':['line']});
+      google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(drawpage);
 
       function drawpage() {
@@ -16,10 +16,20 @@
 
         var plotarea = document.getElementById('plotarea');
         var data = new google.visualization.arrayToDataTable(JSON.parse(jsonData));
+        var ticks = [];
+        for (var i=0; i < 24; i = i + 1) {
+                        ticks.push({v: i*60, f: i + ":00"})
+                      };
         var options = {
+                        hAxis: {
+                          gridlines: { count: 12 }
+                        }
+                        vAxis: {
+                          ticks: ticks
+                        }
         };
 
-        var chart = new google.charts.Line(plotarea);
+        var chart = new google.visualization.LineChart(plotarea);
         chart.draw(data, options);
       };
     </script>
