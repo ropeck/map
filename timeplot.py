@@ -181,6 +181,9 @@ def arrivedata(date):
   resp = Response(response=data, status = 200, mimetype="application/json")
   return(resp)
 
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+  
 @app.route('/')
 def hello():
     resp = make_response(render_template('index.html'))
