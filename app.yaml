@@ -10,6 +10,9 @@ libraries:
 - name: matplotlib
   version: "latest"
 
+env_variables:
+  GAE_USE_SOCKETS_HTTPLIB : 'anyvalue'
+
 handlers:
 - url: /travel.*
   script: timeplot.app

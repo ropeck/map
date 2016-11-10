@@ -145,7 +145,7 @@ def plotpage():
 
 @app.route('/travel')
 def travel():
-  return render_template('travel.html')
+  return render_template('travel.html', origin=request.cookies.get('origin'), destination=request.cookies.get('destination'))
 
 @app.route('/traveldata')
 @app.route('/traveldata/<date>')
@@ -183,19 +183,29 @@ def arrivedata(date):
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
-  
+  if request.method == "POST":
+    resp = make_response(render_template('settings.html'))
+    resp.set_cookie('origin', request.form['origin'])
+    resp.set_cookie('destination', request.form['destination'])
+    return resp
+  else:
+    return render_template('settings.html')
+
+@app.route('/layout')
+def layout():
+  return render_template('layout.html')
+
 @app.route('/')
 def hello():
-    resp = make_response(render_template('index.html'))
+  resp = make_response(render_template('index.html'))
   # check on the cookies
-    if request.cookies.get('origin') is None:
-      resp.set_cookie('origin', "1200 Crittenden Lane, Mountain View CA")
-      resp.set_cookie('destination', "114 El Camino Del Mar, Aptos CA")
-    return resp
-
+  if request.cookies.get('origin') is None:
+    resp.set_cookie('origin', "1200 Crittenden Lane, Mountain View CA")
+    resp.set_cookie('destination', "114 El Camino Del Mar, Aptos CA")
+  return resp
 
 @app.errorhandler(500)
 def server_error(e):
-    # Log the error and stacktrace.
-    logging.exception('An error occurred during a request.')
-    return 'An internal error occurred.', 500
+  # Log the error and stacktrace.
+  logging.exception('An error occurred during a request.')
+  return 'An internal error occurred.'+e, 500
