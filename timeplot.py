@@ -12,7 +12,7 @@ import json
 
 import logging
 
-from flask import Flask, send_file, render_template, Response
+from flask import Flask, send_file, render_template, Response, request, make_response
 import StringIO
 import urllib, base64
 import matplotlib.pyplot as plt
@@ -22,9 +22,6 @@ formatter = DateFormatter('%H:%M')
 
 app = Flask(__name__)
 
-# other plot
-#     return render_template('sample.html', var=data)
-#
 
 @app.route('/drawday/<date>')
 def drawdaypage(date):
@@ -40,7 +37,7 @@ def drawday(td, reverse=False, cache=True):
   if d and cache:
     return d
 
-  gmaps = directions.Directions()
+  gmaps = directions.Directions(origin = request.cookies.get('origin'), destination=request.cookies.get('destination'))
 
   mapdata = [['Time', 'Expected', 'Delay']]
   if reverse:
@@ -183,3 +180,19 @@ def arrivedata(date):
   data = json.dumps(data)
   resp = Response(response=data, status = 200, mimetype="application/json")
   return(resp)
+
+@app.route('/')
+def hello():
+    resp = make_response(render_template('index.html'))
+  # check on the cookies
+    if request.cookies.get('origin') is None:
+      resp.set_cookie('origin', "1200 Crittenden Lane, Mountain View CA")
+      resp.set_cookie('destination', "114 El Camino Del Mar, Aptos CA")
+    return resp
+
+
+@app.errorhandler(500)
+def server_error(e):
+    # Log the error and stacktrace.
+    logging.exception('An error occurred during a request.')
+    return 'An internal error occurred.', 500

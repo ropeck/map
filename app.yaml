@@ -26,5 +26,5 @@ handlers:
 - url: /whentogo
   script: whentogo.app
 - url: /.*
-  script: main.app
+  script: timeplot.app
 

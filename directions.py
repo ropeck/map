@@ -22,7 +22,11 @@ class Mapdirection(ndb.Model):
     created = ndb.DateTimeProperty(auto_now=True)
 
 class Directions:
-  def __init__(self):
+  def __init__(self,
+                 origin =  "1200 Crittenden Lane, Mountain View CA",
+                 destination = "114 El Camino Del Mar, Aptos CA"):
+    self.origin = origin
+    self.destination = destination
     k = Config.query(Config.name == 'APIKEY').get()
     self.gmaps = googlemaps.Client(key=k.value)
 
@@ -32,9 +36,9 @@ class Directions:
   def dv(self, k):
     return int(self.d(k,'value'))
 
-  def directions(self, td, cache=True, reverse=False,
-                 origin =  "1200 Crittenden Lane, Mountain View CA",
-                 destination = "114 El Camino Del Mar, Aptos CA"):
+  def directions(self, td, cache=True, reverse=False):
+    origin = self.origin
+    destination = self.destination
 
     if reverse:
       save = destination
