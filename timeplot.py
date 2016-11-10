@@ -176,9 +176,9 @@ def timeplus(base, off):
 def arrivedata(date):
   d = datetime.now()
   midnight = d.replace(d.year,d.month,d.day,8,0,0,0)
-  data = [['Time', 'Drive', 'Delay']]
+  data = [['Time', 'Leave', 'Expected', 'Delay']]
   for h in drawday(midnight, cache=False)[1:]:  # skip header
-    data.append([h[0], timeplus(h[0],h[2]), timeplus(h[0],h[2]+h[1])])
+    data.append([timeplus(h[0],0), timeplus(h[0], 0), timeplus(h[0],h[2]), timeplus(h[0],h[2]+h[1])])
 
   data = json.dumps(data)
   resp = Response(response=data, status = 200, mimetype="application/json")
