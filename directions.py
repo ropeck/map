@@ -28,6 +28,7 @@ class Directions:
     self.origin = origin
     self.destination = destination
     k = Config.query(Config.name == 'APIKEY').get()
+    self.key = k.value
     self.gmaps = googlemaps.Client(key=k.value)
 
 

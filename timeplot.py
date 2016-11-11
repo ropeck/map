@@ -195,6 +195,11 @@ def settings():
 def layout():
   return render_template('layout.html')
 
+@app.route('/map')
+def map():
+  gmap = directions.Directions()
+  return render_template('map.html', key=gmap.key)
+
 @app.route('/')
 def hello():
   resp = make_response(render_template('index.html'))

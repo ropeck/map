@@ -3,15 +3,32 @@
   <head>
     <title>Commute Time</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <style type="text/css">
       .container {
-        max-width: 500px;
-        padding-top: 100px;
+      }
+      label {
+      float: left;
+      width: 100px;
+      margin-top: 10px;
+      margin-right: 10px;
+      text-align: right;
       }
     </style>
   </head>
   <body>
+    <script>
+function get_cookie(name) {
+	var nameEQ = name + "=";
+	var ca = document.cookie.split(';');
+	for(var i=0;i < ca.length;i++) {
+		var c = ca[i];
+		while (c.charAt(0)==' ') c = c.substring(1,c.length);
+		if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length).replace(/"/g,"");
+	}
+	return null;
+                        }
+                        </script>
     <div class="container">
 <nav class="navbar navbar-inverse" role="navigation">
   <div class="container-fluid">
@@ -38,7 +55,7 @@
       </form>
       <ul class="nav navbar-nav navbar-right">
         <li><a href="#">Link</a></li>
-        <li class="dropdown">
+        <li class="dropdown"> 
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">Dropdown <b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><a href="#">Action</a></li>
@@ -52,13 +69,33 @@
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
+<div>
+        <form name="form" id="form" role="form" method='POST' action='#'>
+        <div class="group">
+        <div class="form-group">
+          <label>Origin</label><input type="text" name="origin" class="form-control" id="origin-box" style="max-width: 400px;">
+        </div>
+        <div class="form-group">
+          <label>Destination</label><input type="text" name="destination" class="form-control" id="destination-box" style="max-width: 400px;">
+        </div>
+
+        </div>
+      </form>
+  </div>
+        <script type="text/javascript">
+          window.onload = function() {
+            document.form.elements['origin'].value = get_cookie('origin');
+            document.form.elements['destination'].value = get_cookie('destination');
+          }
+        </script>
+
       <h2>This is part of my base template</h2>
       <br>
       {% block content %}{% endblock %}
       <br>
       <h2>This is part of my base template</h2>
     </div>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   </body>
 </html>
