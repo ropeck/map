@@ -15,6 +15,7 @@
       text-align: right;
       }
     </style>
+      {% block head %}{% endblock %}
   </head>
   <body>
     <script>
@@ -104,7 +105,7 @@
       }
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key={{key}}&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key={{apikey}}&callback=initMap">
     </script>
       <br>
       {% block content %}{% endblock %}

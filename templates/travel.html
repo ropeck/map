@@ -1,8 +1,8 @@
-<html>
-  <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script type="text/javascript">
+{% extends "layout.html" %}
+{%block head %}
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script>
       google.charts.load('current', {'packages':['line']});
       google.charts.setOnLoadCallback(drawmany);
 
@@ -34,11 +34,9 @@
         var date = new Date().getTime();
         drawpage(date);
       };
+</script>
+{% endblock %}
 
-    </script>
-  </head>
-  <body>
-    Origin: {{origin}}  Dest: {{destination}}
+{% block content %}
     <div id="plotarea" style="width: 900px"></div>
-  </body>
-</html>
+{% endblock %}

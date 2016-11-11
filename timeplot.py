@@ -195,10 +195,15 @@ def settings():
 def layout():
   return render_template('layout.html')
 
+# this makes the apikey available to templates in all urls without adding it to the render call
+@app.context_processor
+def inject_apikey():
+  gmap = directions.Directions()
+  return dict(apikey=gmap.key)
+
 @app.route('/map')
 def map():
-  gmap = directions.Directions()
-  return render_template('map.html', key=gmap.key)
+  return render_template('map.html')
 
 @app.route('/')
 def hello():
