@@ -73,10 +73,10 @@ function get_cookie(name) {
         <form name="form" id="form" role="form" method='POST' action='#'>
         <div class="group">
         <div class="form-group">
-          <label>Origin</label><input type="text" name="origin" class="form-control" id="origin-box" style="max-width: 400px;">
+          <label>Origin</label><input type="text" name="origin" class="form-control" id="origin" style="max-width: 400px;">
         </div>
         <div class="form-group">
-          <label>Destination</label><input type="text" name="destination" class="form-control" id="destination-box" style="max-width: 400px;">
+          <label>Destination</label><input type="text" name="destination" class="form-control" id="destination" style="max-width: 400px;">
         </div>
 
         </div>
@@ -88,12 +88,10 @@ function get_cookie(name) {
             document.form.elements['destination'].value = get_cookie('destination');
           }
         </script>
-
-      <h2>This is part of my base template</h2>
       <br>
       {% block content %}{% endblock %}
       <br>
-      <h2>This is part of my base template</h2>
+
     </div>
     <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
     <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
