@@ -26,8 +26,6 @@ handlers:
   script: timeplot.app
 - url: /collectdata
   script: collector.app
-- url: /whentogo
-  script: whentogo.app
 - url: /.*
   script: timeplot.app
 

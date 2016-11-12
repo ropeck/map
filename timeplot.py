@@ -11,9 +11,10 @@ import pytz
 import json
 
 import logging
+import sys
 
 from flask import Flask, send_file, render_template, Response, request, make_response
-import StringIO
+from cStringIO import StringIO
 import urllib, base64
 import matplotlib.pyplot as plt
 
@@ -72,7 +73,7 @@ def drawday(td, reverse=False, cache=True):
     if reverse:
       mapdata.append([tdstr, delay])
     else:
-      mapdata.append([tdstr, delay, dur])
+      mapdata.append([tdstr, dur, delay])
 
     td = td + timedelta(hours=1)
   memcache.set(memkey, mapdata)
@@ -175,7 +176,7 @@ def arrivedata(date):
   midnight = d.replace(d.year,d.month,d.day,8,0,0,0)
   data = [['Time', 'Leave', 'Expected', 'Delay']]
   for h in drawday(midnight, cache=False)[1:]:  # skip header
-    data.append([timeplus(h[0],0), timeplus(h[0], 0), timeplus(h[0],h[2]), timeplus(h[0],h[2]+h[1])])
+    data.append([timeplus(h[0],0), timeplus(h[0], 0), timeplus(h[0],h[1]), timeplus(h[0],h[2]+h[1])])
 
   data = json.dumps(data)
   resp = Response(response=data, status = 200, mimetype="application/json")
@@ -207,15 +208,51 @@ def map():
 
 @app.route('/')
 def hello():
-  resp = make_response(render_template('index.html'))
+  gmaps = directions.Directions()
+  l = gmaps.directions(datetime.today())
+  resp = make_response(render_template('index.html', directions=l))
   # check on the cookies
   if request.cookies.get('origin') is None:
     resp.set_cookie('origin', "1200 Crittenden Lane, Mountain View CA")
     resp.set_cookie('destination', "114 El Camino Del Mar, Aptos CA")
+
   return resp
+
+@app.route('/whentogo')
+def whentogo():
+  gmaps = directions.Directions()
+
+  d=datetime.today()
+  l = gmaps.directions(d)
+
+  old_stdout = sys.stdout
+  sys.stdout = mystdout = StringIO()
+
+  print "<pre>"
+  print  gmaps.distance_text, 'normally', gmaps.duration_text
+  print 'LEAVE ARRIVE NOTES'
+  tz = d.replace(tzinfo=pytz.timezone("UTC")).astimezone(pytz.timezone("US/Pacific"))
+  print '[now]',(tz+timedelta(minutes=gmaps.duration_in_traffic/60)).strftime("%H:%M"), gmaps.duration_in_traffic_text, gmaps.diffstr
+  d=d.replace(d.year,d.month,d.day,d.hour,int(d.minute/10)*10,0,0) + timedelta(minutes=10)
+  for f in range(24):
+    td = d + timedelta(minutes=10*f)
+    l = gmaps.directions(td)
+    tz = td.replace(tzinfo=pytz.timezone("UTC")).astimezone(pytz.timezone("US/Pacific"))
+    try:
+      print tz.strftime("%H:%M"),(tz+timedelta(minutes=gmaps.duration_in_traffic/60)).strftime("%H:%M"), gmaps.duration_in_traffic_text, gmaps.diffstr
+    except Exception, e:
+      print "error", repr(e)
+
+      # 44 miles normally 0:52
+      # now   17:00 1:12 (+19)
+      # 16:50 17:09 1:12 (+19)
+      # ...
+  print "</pre>"
+  sys.stdout = old_stdout
+  return render_template('whentogo.html', text=mystdout.getvalue())
 
 @app.errorhandler(500)
 def server_error(e):
   # Log the error and stacktrace.
   logging.exception('An error occurred during a request.')
-  return 'An internal error occurred.'+e, 500
+  return 'An internal error occurred.'+repr(e), 500
