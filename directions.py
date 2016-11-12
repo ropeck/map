@@ -37,7 +37,7 @@ class Directions:
   def dv(self, k):
     return int(self.d(k,'value'))
 
-  def directions(self, td, cache=True, reverse=False):
+  def directions(self, td=None, cache=True, reverse=False):
     origin = self.origin
     destination = self.destination
 
@@ -52,6 +52,9 @@ class Directions:
     self.distance_text = ''
     self.duration_text = ''
     self.diffstr = ''
+
+    if td == None:
+      td = datetime.now()
 
     if td.tzinfo is None or td.tzinfo.utcoffset(td) is None:
       td = td.replace(tzinfo=pytz.UTC)

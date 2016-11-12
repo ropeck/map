@@ -209,8 +209,9 @@ def map():
 @app.route('/')
 def hello():
   gmaps = directions.Directions()
-  l = gmaps.directions(datetime.today())
-  resp = make_response(render_template('index.html', directions=l))
+  l = gmaps.directions(None)
+
+  resp = make_response(render_template('index.html', directions=str(l.keys())))
   # check on the cookies
   if request.cookies.get('origin') is None:
     resp.set_cookie('origin', "1200 Crittenden Lane, Mountain View CA")
