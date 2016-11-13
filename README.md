@@ -14,3 +14,12 @@ be in the file '.apikey' in the working directory.
    * TODO() graph the arrival time
    * TODO() memcache the data requests
    * TODO() make an app in app engine to run it
+
+# setup
+  The lib directory needs to have a copy of the packages used by the app
+(Flask, others)
+
+easy_install pip
+pip install -t flask googlemaps pytz
+
+
