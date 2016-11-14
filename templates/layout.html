@@ -73,8 +73,9 @@
   </div>
     <div id="map" style="height:350px; width:350px; "></div>
     <script>
-      function form_element(elem):
+      function form_element(elem) {
         return document.form.elements[elem].value
+      }
 
       function initMap() {
         var directionsService = new google.maps.DirectionsService;

@@ -30,7 +30,7 @@ class Directions:
     k = Config.query(Config.name == 'APIKEY').get()
     self.key = k.value
     self.gmaps = googlemaps.Client(key=k.value)
-
+    self.commentary = "[no directions]"
 
   def d(self, k,t='text'):
     return self.leg[k][t]
@@ -46,6 +46,11 @@ class Directions:
       destination = origin
       origin = save
 
+    self.origin = origin
+    self.destination = destination
+    self.td = td
+    self.cache = cache
+    self.reverse = reverse
     self.duration_in_traffic = 0
     self.duration_in_traffic_text = ''
     self.duration = 0
@@ -65,7 +70,8 @@ class Directions:
                            Mapdirection.destination == destination).get()
 
     if not m and td < datetime.now():  # no data from past
-      return
+      print "warn: no data in storage and date in past. using now for date"
+      td = datetime.now()
 
     if not m or cache == False:
       self.leg = self.gmaps.directions(origin, destination,
@@ -92,5 +98,5 @@ class Directions:
       except:
         exc_type, exc_value, exc_traceback = sys.exc_info()
         print "error saving Mapdirection", str(m.depart), exc_value, exc_traceback
-
+    self.commentary = "Starting at %s, travel is %s taking %s, %d minutes longer than %s normally." % (str(td), self.distance_text, self.duration_in_traffic_text,  (self.duration_in_traffic-self.duration)/60, self.duration_text)
     return self.leg
