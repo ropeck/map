@@ -1,8 +1,6 @@
-<html>
-  <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-    <script type="text/javascript">
+{% extends "layout.html" %}
+{% block head %}
+<script>
       google.charts.load('current', {'packages':['corechart']});
       google.charts.setOnLoadCallback(drawpage);
 
@@ -32,9 +30,8 @@
         var chart = new google.visualization.LineChart(plotarea);
         chart.draw(data, options);
       };
-    </script>
-  </head>
-  <body>
-    <div id="plotarea" style="width: 900px; height: 600px;"></div>
-  </body>
-</html>
+</script>
+{% endblock %}
+{% block content %}
+  <div id="plotarea" style="width: 900px; height: 600px;"></div>
+{% endblock %}

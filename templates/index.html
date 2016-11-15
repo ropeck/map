@@ -1,6 +1,31 @@
 {% extends "layout.html" %}
 {% block content %}
-<pre>
-  {{ directions | safe}}
-  </pre>
+<style type="text/css">
+.slow {
+    font-weight: bold;
+    color: red;
+}
+</style>
+
+<h2>Driving Traffic Info</h2>
+  {{ directions.commentary | safe }}
+
+<h2>Details by Steps</h2>
+<table>
+  <tr><td>Directions</td><td>Dist</td><td>Time</td></tr>
+{% for step in directions.leg['steps'] %}
+  {% set rowcolor="normal" %}
+  {% if step['duration']['value'] > 10*60 %}
+  {% set rowcolor="slow" %}
+  {% endif %}
+
+<tr>
+  <td>{{ step['html_instructions'] | safe }}</td> 
+  <td class={{ rowcolor }}>{{ step['distance']['text'] | safe }}</td>
+  <td class={{ rowcolor }}>{{ step['duration']['text'] | safe }}</td>
+</tr>
+{% endfor %}
+</table>
+
 {% endblock %}
+
