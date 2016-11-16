@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import googlemaps
 from google.appengine.api import memcache
+from google.appengine import runtime
 from datetime import datetime
 from datetime import timedelta
 import directions
@@ -96,17 +97,20 @@ def drawdaylines(td):
     td = td + timedelta(days=1)
 
   ret = [['Time'] + daylist]
-  r = 0
-  for m in drawday(td)[1:]:
-    r = r + 1
-    row = [m[0]]
-    dn = 1
-    for day in daylist:
-      row.append(data[day][r][1])
-      dn = dn + 1
-    ret.append(row)
-
-  memcache.set(memkey, ret)  # maybe use a datastore to cache here?
+  try:
+    r = 0
+    for m in drawday(td)[1:]:
+      r = r + 1
+      row = [m[0]]
+      dn = 1
+      for day in daylist:
+        row.append(data[day][r][1])
+        dn = dn + 1
+        ret.append(row)
+    memcache.set(memkey, ret)  # maybe use a datastore to cache here?
+  except runtime.DeadlineExceededError:
+    print "error: deadline exceeded in lookups"
+    # the lookups timed out, so the result is probably incomplete
   return ret
 
 @app.route('/plotdatarev')
